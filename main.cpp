@@ -2,23 +2,54 @@
 #include "menu.h"
 #include "dynamic-array.h"
 #include "userstring.h"
+#include "cppmenu.h"
 #include "cppsafeio.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <algorithm>
 
-int main() {
-  dynamic_array<pokemon> pokedex{};
-  isThereLoadblePokemonData() ? readPokemonData(pokedex) : writeDefaultMessageToTextFile();
-  bool exitProgram{false};
-  while (!exitProgram) {
-    printMainMenu();
-    doUserOption(exitProgram, pokedex);
-    CppSafeIO::pressEnterToContinue();
-  }
-  printExitMessage();
-  return 0;
+void newPokemon(dynamic_array<pokemon>& pokedex) 
+{
+    addPokemon(pokedex);
+    sortPokedex(pokedex);
+    savePokedexData(pokedex);
+}
+
+void displayAllData(dynamic_array<pokemon>& pokedex)
+{
+    isPokedexEmpty(pokedex) ? printNoDataAvailableError() : printPokedexData(pokedex);
+}
+
+void deleteAllData(dynamic_array<pokemon>& pokedex)
+{
+    if (confirmDeletion())
+        erasePokedexData(pokedex);
+}
+
+int main() 
+{
+    dynamic_array<pokemon> pokedex{};
+    isThereLoadblePokemonData() ? readPokemonData(pokedex) : writeDefaultMessageToTextFile();
+    
+    CppMenu::CommonMenu menu
+    {
+        "PokeDex",
+
+        {
+            {"New Pokemon", [&]() { newPokemon(pokedex); } },
+            {"See Current Data", [&]() { displayAllData(pokedex); } },
+            {"Delete All Data", [&]() { deleteAllData(pokedex); } }
+        },
+
+        true
+    };
+
+    menu.run();
+    
+    printExitMessage();
+    
+    return 0;
 }
 
 bool isThereLoadblePokemonData() {
@@ -52,30 +83,6 @@ void writeDefaultMessageToTextFile() {
   std::ofstream writeToPokedex{"pokedex.txt"};
   writeToPokedex << "[POKEDEX DATA AVAILABLE]\n\n";
   writeToPokedex.close();
-}
-
-void doUserOption(bool& exitProgram, dynamic_array<pokemon>& pokedex) {
-  int userInput{ CppSafeIO::getInput<int>() };
-  switch (userInput) {
-    case 1:
-      addPokemon(pokedex);
-      sortPokedex(pokedex);
-      savePokedexData(pokedex);
-      break;
-    case 2:
-      isPokedexEmpty(pokedex) ? printNoDataAvailableError() : printPokedexData(pokedex);
-      break;
-    case 3:
-      if (confirmDeletion())
-        erasePokedexData(pokedex);
-      break;
-    case 4:
-      exitProgram = true;
-      break;
-    default:
-      std::cout << "Oops! Unexpected Error";
-      break;
-  }
 }
 
 void addPokemon(dynamic_array<pokemon>& pokedex) {

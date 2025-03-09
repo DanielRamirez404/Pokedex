@@ -2,17 +2,6 @@
 #include "cppsafeio.h"
 #include <iostream>
 
-void printMainMenu() {
-  std::cout << "----------------------------------------------\n";
-  std::cout << "                   POKEDEX\n";
-  std::cout << "----------------------------------------------\n";
-  std::cout << "1) ENTER A NEW POKEMON\n";
-  std::cout << "2) SEE CURRENT POKEMON DATA\n";
-  std::cout << "3) ERASE ALL CURRENT POKEMON DATA\n";
-  std::cout << "4) EXIT\n";
-  std::cout << "----------------------------------------------\n";
-}
-
 void printNotAddablePokemonMessage() {
     std::cout << "SORRY, SEEMS LIKE YOUR POKEMON IS NOT ADDABLE\n";
     std::cout << "THIS MIGHT BE EITHER BEACAUSE IT\'S CONFLICTIVE\n";

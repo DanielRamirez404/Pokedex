@@ -12,7 +12,6 @@ struct pokemon {
 bool isThereLoadblePokemonData();
 void readPokemonData(dynamic_array<pokemon>& pokedex);
 void writeDefaultMessageToTextFile();
-void doUserOption(bool& exitProgram, dynamic_array<pokemon>& pokedex);
 void addPokemon(dynamic_array<pokemon>& pokedex);
 std::string inputPokemonName();
 int inputPokemonNumber();
