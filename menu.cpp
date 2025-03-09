@@ -1,5 +1,5 @@
 #include "menu.h"
-#include "userinput.h"
+#include "cppsafeio.h"
 #include <iostream>
 
 void printMainMenu() {
@@ -14,10 +14,10 @@ void printMainMenu() {
 }
 
 void printNotAddablePokemonMessage() {
-  std::cout << "SORRY, SEEMS LIKE YOUR POKEMON IS NOT ADDABLE\n";
-  std::cout << "THIS MIGHT BE EITHER BEACAUSE IT\'S CONFLICTIVE\n";
-  std::cout << "OR BEACAUSE OF A WRONG INPUT\n";
-  pressAnyToContinue();
+    std::cout << "SORRY, SEEMS LIKE YOUR POKEMON IS NOT ADDABLE\n";
+    std::cout << "THIS MIGHT BE EITHER BEACAUSE IT\'S CONFLICTIVE\n";
+    std::cout << "OR BEACAUSE OF A WRONG INPUT\n";
+    CppSafeIO::pressEnterToContinue();
 }
 
 void printNoDataAvailableError() {
@@ -29,7 +29,7 @@ bool confirmDeletion() {
   std::cout << "----------------------------------------------\n";
   std::cout << "ARE YOU SURE YOU WANT TO ERASE\n";
   std::cout << "ALL POKEDEX DATA? (y/n)\n";
-  bool userInput{ ynInput() };
+  bool userInput{ CppSafeIO::parseYesNoInput() };
   return userInput;
 }
 

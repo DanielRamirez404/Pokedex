@@ -2,7 +2,7 @@
 #include "menu.h"
 #include "dynamic-array.h"
 #include "userstring.h"
-#include "userinput.h"
+#include "cppsafeio.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -15,7 +15,7 @@ int main() {
   while (!exitProgram) {
     printMainMenu();
     doUserOption(exitProgram, pokedex);
-    pressAnyToContinue();
+    CppSafeIO::pressEnterToContinue();
   }
   printExitMessage();
   return 0;
@@ -55,7 +55,7 @@ void writeDefaultMessageToTextFile() {
 }
 
 void doUserOption(bool& exitProgram, dynamic_array<pokemon>& pokedex) {
-  int userInput{ getUserInput<int>() };
+  int userInput{ CppSafeIO::getInput<int>() };
   switch (userInput) {
     case 1:
       addPokemon(pokedex);
@@ -73,7 +73,7 @@ void doUserOption(bool& exitProgram, dynamic_array<pokemon>& pokedex) {
       exitProgram = true;
       break;
     default:
-      printBadInputError();
+      std::cout << "Oops! Unexpected Error";
       break;
   }
 }
@@ -89,22 +89,22 @@ void addPokemon(dynamic_array<pokemon>& pokedex) {
 
 std::string inputPokemonName() {
   std::cout << "PLEASE, ADD THIS POKEMON\'S NAME\n";
-  return uppercase(getUserInput<std::string>());
+  return uppercase(CppSafeIO::getInput<std::string>());
 }
 
 int inputPokemonNumber() {
   std::cout << "NOW, YOU CAN ADD ITS POKEDEX NUMBER\n";
-  return getUserInput<int>();
+  return CppSafeIO::getInput<int>();
 }
 
 std::string inputPokemonTypes() {
   std::cout << "IS IT A MONOTYPE POKEMON? (y/n)\n";
-  return ynInput() ? inputMonotypePokemonType() : inputNonMonotypePokemonTypes();
+  return CppSafeIO::parseYesNoInput() ? inputMonotypePokemonType() : inputNonMonotypePokemonTypes();
 }
 
 std::string inputMonotypePokemonType() {
   std::cout << "INTRODUCE ITS TYPE\n";
-  std::string type { uppercase(getUserInput<std::string>()) };
+  std::string type { uppercase(CppSafeIO::getInput<std::string>()) };
   return isTypeValid(type) ? '[' + type + ']' : "INVALID_TYPE";
 }
 
@@ -113,7 +113,7 @@ std::string inputNonMonotypePokemonTypes() {
   int arraySize { sizeof(types) / sizeof(std::string) };
   for (int i = 0; i < arraySize; i++) {
     std::cout << "INTRODUCE ITS TYPE #" << i + 1 << '\n';
-    types[i] = uppercase(getUserInput<std::string>());
+    types[i] = uppercase(CppSafeIO::getInput<std::string>());
     if (!isTypeValid(types[i]))
       return "INVALID_TYPE";
   }
@@ -142,7 +142,7 @@ bool isPokemonAddable(dynamic_array<pokemon>& pokedex, pokemon& pokemonToAdd) {
 
 void askUserToAddAnotherPokemon(dynamic_array<pokemon>& pokedex) {
   std::cout << "DO YOU WANT TO ADD ANOTHER POKEMON? (y/n)\n";
-  if (ynInput()) 
+  if (CppSafeIO::parseYesNoInput()) 
     addPokemon(pokedex);
 }
 
