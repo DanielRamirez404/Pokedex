@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(Pokedex LANGUAGES CXX)
 
-add_executable(Pokedex main.cpp menu.cpp userstring.cpp)
-target_include_directories(Pokedex PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+add_subdirectory(src)
 
 include(FetchContent)
 
@@ -14,5 +14,3 @@ FetchContent_Declare( cppmenu
 
 FetchContent_MakeAvailable(cppmenu)
 target_link_libraries(Pokedex ${CPP_MENU})
-cmake_minimum_required(VERSION 3.14)
-project(Pokedex LANGUAGES CXX)
