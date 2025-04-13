@@ -1,15 +1,13 @@
-# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
-name: CMake on multiple platforms
+name: CMake CI for cross-platform libraries
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
@@ -35,27 +33,31 @@ jobs:
             c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
+  
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set reusable strings
-      id: strings
+    - name: Set directory strings
+      id: directories
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        main_dir="${{ github.workspace }}"
+        echo "main-dir=$main_dir" >> "$GITHUB_OUTPUT"
+        echo "build-dir=$main_dir/build" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
       run: >
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        cmake -B ${{ steps.directories.outputs.build-dir }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -S ${{ github.workspace }}
+        -S ${{ steps.directories.outputs.main-dir }}
 
-    - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+    - name: Build with CMake
+      run: cmake --build ${{ steps.directories.outputs.build-dir }} --config ${{ matrix.build_type }}
 
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest --build-config ${{ matrix.build_type }}
+    - name: Test with Ctest
+      working-directory: ${{ steps.directories.outputs.build-dir }}
+      run: ctest -V --build-config ${{ matrix.build_type }}
